@@ -4,14 +4,27 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
+  HomeBottomTab: undefined
+  SettingsBottomTab: undefined;
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+export type HomeParamList = {
+  RestaurantScreen: undefined;
+  MenusScreen: undefined;
+  DishesScreen: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type SettingsParamList = {
+  SettingsScreen: undefined;
 };
+
+export enum RestaurantType {
+  KEBAP = "Kebap",
+  PIZZERIA = "Pizzeria"
+}
+
+export interface Restaurant {
+  id: number,
+  name : string,
+  restaurantType : RestaurantType
+}
