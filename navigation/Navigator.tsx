@@ -4,9 +4,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import RestaurantsScreen from '../screens/HomeScreen';
+import RestaurantsScreen from '../screens/RestaurantsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { BottomTabParamList, HomeParamList, SettingsParamList } from '../types';
+import RestaurantDetailScreen from '../screens/RestaurantDetailScreen';
 
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -56,6 +57,11 @@ function HomeNavigator() {
         name="RestaurantScreen"
         component={RestaurantsScreen}
         options={{ headerTitle: 'Home' }}
+      />
+      <HomeStackNavigator.Screen
+        name="RestaurantDetailScreen"
+        component={RestaurantDetailScreen}
+        options={{ headerTitle: 'Restaurant detail' }}
       />
     </HomeStackNavigator.Navigator>
   );

@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
 import restaurants from '../mock_data';
 import { Restaurant } from '../types';
 
 
-export default function RestaurantsScreen() {
+export default function RestaurantsScreen({navigation}) {
   
   const renderItem = ( { item } : {item: Restaurant}) => (
-    <View>
-      <Text>{item.name}</Text>
-      <Text>{item.restaurantType}</Text>
-    </View>
+    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen')}>
+      <Text style={styles.itemName}>{item.name}</Text>
+      <Text style={styles.itemType}>{item.restaurantType}</Text>
+    </TouchableOpacity>
   );
 
 
@@ -32,23 +32,38 @@ export default function RestaurantsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // height: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    flex: 1,
+    height: 30,
     fontSize: 20,
     fontWeight: 'bold',
     alignSelf: 'flex-start',
     marginStart: 30,
-    marginTop: 20,
+    marginTop: 40,
     backgroundColor: 'powderblue'
   },
   list: {
-    flex: 2,
+    // flex: 2
     marginVertical: 3,
     width: '80%',
     backgroundColor: 'skyblue'
   },
+  item: {
+    margin: 10,
+    borderWidth: 2,
+    borderColor: 'blue'
+  },
+  itemName: {
+    color: 'midnightblue',
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
+  itemType: {
+    color: 'steelblue',
+    fontSize: 15,
+    fontStyle: 'italic'
+  }
 });

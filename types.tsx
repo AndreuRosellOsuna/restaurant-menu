@@ -10,6 +10,7 @@ export type BottomTabParamList = {
 
 export type HomeParamList = {
   RestaurantScreen: undefined;
+  RestaurantDetailScreen: undefined;
   MenusScreen: undefined;
   DishesScreen: undefined;
 };
@@ -20,7 +21,8 @@ export type SettingsParamList = {
 
 export enum RestaurantType {
   KEBAP = "Kebap",
-  PIZZERIA = "Pizzeria"
+  PIZZERIA = "Pizzeria",
+  BURGUERS = "Burguers"
 }
 
 export interface Restaurant {
