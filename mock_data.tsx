@@ -37,4 +37,39 @@ let restaurant5 : Restaurant = {
 }
 restaurants.push(restaurant5);
 
+let restaurant6 : Restaurant = {
+    id: 6,
+    name : "McDonalds2",
+    restaurantType : RestaurantType.BURGUERS
+}
+restaurants.push(restaurant6);
+
+let restaurant7 : Restaurant = {
+    id: 7,
+    name : "McDonalds3",
+    restaurantType : RestaurantType.BURGUERS
+}
+restaurants.push(restaurant7);
+
+let restaurant8 : Restaurant = {
+    id: 8,
+    name : "McDonalds8",
+    restaurantType : RestaurantType.BURGUERS
+}
+restaurants.push(restaurant8);
+
+let restaurant9 : Restaurant = {
+    id: 9,
+    name : "McDonalds9",
+    restaurantType : RestaurantType.BURGUERS
+}
+restaurants.push(restaurant9);
+
+let restaurant10 : Restaurant = {
+    id: 10,
+    name : "McDonalds 10",
+    restaurantType : RestaurantType.BURGUERS
+}
+restaurants.push(restaurant10);
+
 export default restaurants;
