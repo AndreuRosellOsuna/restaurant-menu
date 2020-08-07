@@ -15,7 +15,7 @@ export default function RestaurantsScreen({navigation}) {
   }, []);
   
   const renderItem = ( { item } : {item: Restaurant}) => (
-    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen')}>
+    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
       <Text style={styles.itemName}>{item.name}</Text>
       <Text style={styles.itemType}>{item.restaurantType}</Text>
     </TouchableOpacity>
@@ -28,7 +28,7 @@ export default function RestaurantsScreen({navigation}) {
       <View style={styles.list}>
         <FlatList 
             data={restaurants}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item._id.toString()}
             renderItem={renderItem}
          />
       </View>

@@ -26,7 +26,8 @@ export enum RestaurantType {
 }
 
 export interface Restaurant {
-  id: number,
+  _id: number,
+  id: string,
   name : string,
   restaurantType : RestaurantType
 }

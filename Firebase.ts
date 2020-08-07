@@ -46,7 +46,7 @@ class Firebase {
       .then(results => {
         var restaurants: Restaurant[] = [];
         results.forEach(restaurant => {
-          restaurants.push(this.parse(restaurant.data()));
+          restaurants.push(this.parse(restaurant.id, restaurant.data()));
         });
         callback(restaurants);
       })
@@ -54,13 +54,24 @@ class Firebase {
         console.error(error);
       });
   }
-  
-  parse = (snapshot) : Restaurant => {
 
-    const { name, restaurantType, id } = snapshot;
+  getRestaurantById = ( restaurantId, callback ) : void => {
+    this.firestore.collection('restaurants')
+      .doc(restaurantId)
+      .get()
+      .then(doc => {
+        var restaurant : Restaurant = this.parse(doc.id, doc.data())
+        callback(restaurant);
+      })
+  }
+  
+  parse = (id, snapshot) : Restaurant => {
+
+    const { name, restaurantType, _id } = snapshot;
     // const { key: id } = snapshot;
 
     const restaurant = {
+      _id,
       id,
       name,
       restaurantType
