@@ -2,11 +2,17 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
-import restaurants from '../mock_data';
-import { Restaurant } from '../types';
+import { Restaurant, RestaurantType } from '../types';
+import Firebase from '../Firebase';
 
 
 export default function RestaurantsScreen({navigation}) {
+
+  const [restaurants, setRestaurants] = React.useState([]);
+
+  React.useEffect(() => {
+    Firebase.shared.getRestaurants(setRestaurants);
+  }, []);
   
   const renderItem = ( { item } : {item: Restaurant}) => (
     <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen')}>
