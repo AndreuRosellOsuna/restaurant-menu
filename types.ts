@@ -11,6 +11,7 @@ export type BottomTabParamList = {
 export type HomeParamList = {
   RestaurantScreen: undefined;
   RestaurantDetailScreen: undefined;
+  RestaurantModificationScreen: undefined;
   MenusScreen: undefined;
   DishesScreen: undefined;
 };
@@ -29,5 +30,6 @@ export interface Restaurant {
   _id: number,
   id: string,
   name : string,
-  restaurantType : RestaurantType
+  restaurantType : RestaurantType,
+  description: string
 }

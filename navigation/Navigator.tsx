@@ -8,6 +8,7 @@ import RestaurantsScreen from '../screens/RestaurantsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { BottomTabParamList, HomeParamList, SettingsParamList } from '../types';
 import RestaurantDetailScreen from '../screens/RestaurantDetailScreen';
+import RestaurantModificationScreen from '../screens/RestaurantModificationScreen';
 
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -62,6 +63,11 @@ function HomeNavigator() {
         name="RestaurantDetailScreen"
         component={RestaurantDetailScreen}
         options={{ headerTitle: 'Restaurant detail' }}
+      />
+      <HomeStackNavigator.Screen
+        name="RestaurantModificationScreen"
+        component={RestaurantModificationScreen}
+        options={{ headerTitle: 'Restaurant modification' }}
       />
     </HomeStackNavigator.Navigator>
   );
