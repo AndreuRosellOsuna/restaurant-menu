@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Button } from 'react-native';
 import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { TextInput } from 'react-native-gesture-handler';
-import { Restaurant } from '../types';
 
 export default function RestaurantModificationScreen({route, navigation}) {
 
@@ -19,6 +18,11 @@ export default function RestaurantModificationScreen({route, navigation}) {
         setRestaurant({...restaurant, [field]: text})
     }
 
+    let save = () => {
+        Firebase.shared.updateRestaurantById(restaurantId, restaurant);
+        navigation.goBack();
+    }
+
     React.useEffect(() => {
         Firebase.shared.getRestaurantById(restaurantId, setRestaurant);
     }, []);
@@ -26,17 +30,19 @@ export default function RestaurantModificationScreen({route, navigation}) {
     return (
         <View style={styles.container}>
             <Text style={styles.name}>Name :</Text>
-            <Text >{restaurant.name}</Text>
             <TextInput style={styles.input}
                 onChangeText={text => textChanged(text, 'name')}
                 defaultValue={restaurant.name}
                 />
             <Text style={styles.name}>Description :</Text>
-            <Text >{restaurant.description}</Text>
             <TextInput style={styles.input}
                 onChangeText={text => textChanged(text, 'description')}
                 defaultValue={restaurant.description}
                 />
+
+            <Button 
+                title="Save"
+                onPress={save} />
         </View>
     );
 }
@@ -56,6 +62,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
     input: {
-        backgroundColor: 'grey'
+        backgroundColor: 'grey',
+        fontSize: 20,
     }
 });

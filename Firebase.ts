@@ -80,6 +80,11 @@ class Firebase {
     return restaurant;
   };
   
+  updateRestaurantById = (restaurantId, restaurant) => {
+    this.firestore.collection('restaurants')
+      .doc(restaurantId)
+      .update(restaurant)
+  }
 }
 
 Firebase.shared = new Firebase();
