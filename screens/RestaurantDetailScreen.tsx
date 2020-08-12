@@ -18,7 +18,8 @@ export default function RestaurantDetailScreen({route, navigation}) {
     }
 
     React.useEffect(() => {
-        Firebase.shared.getRestaurantById(restaurantId, setRestaurant);
+        const unsubscribe = Firebase.shared.subscribeRestaurantById(restaurantId, setRestaurant);
+        return unsubscribe;
     }, []);
 
     return (

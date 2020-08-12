@@ -65,6 +65,16 @@ class Firebase {
       })
   }
   
+
+  subscribeRestaurantById = ( restaurantId, callback ) => {
+    return this.firestore.collection('restaurants')
+      .doc(restaurantId)
+      .onSnapshot(doc => {
+        var restaurant : Restaurant = this.parse(doc.id, doc.data())
+        callback(restaurant);
+      });
+  }
+  
   parse = (id, snapshot) : Restaurant => {
 
     const { name, restaurantType, _id, description } = snapshot;
