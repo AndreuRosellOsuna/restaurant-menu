@@ -12,6 +12,7 @@ export type HomeParamList = {
   RestaurantScreen: undefined;
   RestaurantDetailScreen: undefined;
   RestaurantModificationScreen: undefined;
+  RestaurantCreationScreen: undefined;
   MenusScreen: undefined;
   DishesScreen: undefined;
 };
@@ -27,7 +28,6 @@ export enum RestaurantType {
 }
 
 export interface Restaurant {
-  _id: number,
   id: string,
   name : string,
   restaurantType : RestaurantType,

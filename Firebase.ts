@@ -4,6 +4,7 @@ import { Restaurant } from './types';
 class Firebase {
   static shared: Firebase;
 
+  private restaurantCollection : string = 'restaurants';
   private firestore: firebase.firestore.Firestore;
   
   constructor() {
@@ -41,7 +42,7 @@ class Firebase {
   };
 
   getRestaurants = ( callback ) : void => {
-    this.firestore.collection('restaurants')
+    this.firestore.collection(this.restaurantCollection)
       .get()
       .then(results => {
         var restaurants: Restaurant[] = [];
@@ -56,7 +57,7 @@ class Firebase {
   }
 
   getRestaurantById = ( restaurantId, callback ) : void => {
-    this.firestore.collection('restaurants')
+    this.firestore.collection(this.restaurantCollection)
       .doc(restaurantId)
       .get()
       .then(doc => {
@@ -67,7 +68,7 @@ class Firebase {
   
 
   subscribeRestaurantById = ( restaurantId, callback ) => {
-    return this.firestore.collection('restaurants')
+    return this.firestore.collection(this.restaurantCollection)
       .doc(restaurantId)
       .onSnapshot(doc => {
         var restaurant : Restaurant = this.parse(doc.id, doc.data())
@@ -77,10 +78,9 @@ class Firebase {
   
   parse = (id, snapshot) : Restaurant => {
 
-    const { name, restaurantType, _id, description } = snapshot;
+    const { name, restaurantType, description } = snapshot;
 
     const restaurant = {
-      _id,
       id,
       name,
       restaurantType,
@@ -91,9 +91,16 @@ class Firebase {
   };
   
   updateRestaurantById = (restaurantId, restaurant) => {
-    this.firestore.collection('restaurants')
+    this.firestore.collection(this.restaurantCollection)
       .doc(restaurantId)
       .update(restaurant)
+  }
+
+  createNewRestaurant = (restaurant : Restaurant, callback : () => any) => {
+    this.firestore.collection(this.restaurantCollection)
+      .add(restaurant)
+      .then(callback())
+      .catch((e) => console.error(`error on adding new restaurant: ${e} `));
   }
 }
 

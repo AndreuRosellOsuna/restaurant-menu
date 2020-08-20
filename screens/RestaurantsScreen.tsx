@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Button } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
 import { Restaurant, RestaurantType } from '../types';
@@ -13,6 +13,10 @@ export default function RestaurantsScreen({navigation}) {
   React.useEffect(() => {
     Firebase.shared.getRestaurants(setRestaurants);
   }, []);
+
+  let createNewRestaurant = () => {
+    navigation.navigate('RestaurantCreationScreen'); 
+  }
   
   const renderItem = ( { item } : {item: Restaurant}) => (
     <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
@@ -28,10 +32,12 @@ export default function RestaurantsScreen({navigation}) {
       <View style={styles.list}>
         <FlatList 
             data={restaurants}
-            keyExtractor={item => item._id.toString()}
+            keyExtractor={item => item.id}
             renderItem={renderItem}
          />
       </View>
+      <Button title="Add new Restaurant"
+              onPress={createNewRestaurant}></Button>
     </View>
   );
 }
