@@ -41,19 +41,30 @@ class Firebase {
     }
   };
 
+  subscribeToRestaurantList = (callback) => {
+    return this.firestore.collection(this.restaurantCollection)
+      .onSnapshot(results => {
+        callback(this.parseRestaurantList(results));
+      })
+  }
+
   getRestaurants = ( callback ) : void => {
     this.firestore.collection(this.restaurantCollection)
       .get()
       .then(results => {
-        var restaurants: Restaurant[] = [];
-        results.forEach(restaurant => {
-          restaurants.push(this.parse(restaurant.id, restaurant.data()));
-        });
-        callback(restaurants);
+        callback(this.parseRestaurantList(results));
       })
       .catch(error => {
         console.error(error);
       });
+  }
+
+  private parseRestaurantList = (results) : Restaurant[] => {
+    var restaurants: Restaurant[] = [];
+    results.forEach(restaurant => {
+      restaurants.push(this.parse(restaurant.id, restaurant.data()));
+    });
+    return restaurants;
   }
 
   getRestaurantById = ( restaurantId, callback ) : void => {

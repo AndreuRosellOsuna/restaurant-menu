@@ -11,7 +11,8 @@ export default function RestaurantsScreen({navigation}) {
   const [restaurants, setRestaurants] = React.useState([]);
 
   React.useEffect(() => {
-    Firebase.shared.getRestaurants(setRestaurants);
+    const unsubscribe = Firebase.shared.subscribeToRestaurantList(setRestaurants);
+    return unsubscribe;
   }, []);
 
   let createNewRestaurant = () => {
