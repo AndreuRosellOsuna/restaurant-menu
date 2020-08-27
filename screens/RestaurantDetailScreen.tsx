@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Button } from 'react-native';
+import { StyleSheet, Button, Modal } from 'react-native';
 import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
 
@@ -13,12 +13,32 @@ export default function RestaurantDetailScreen({route, navigation}) {
             "description": ""
         });
 
+    const unsubscribeFunction = React.useRef(() => {});
+
+    const [modalVisible, setModalVisible] = React.useState(false);
+
     let modifyRestaurant = () => {
         navigation.navigate('RestaurantModificationScreen', {restaurantId: restaurantId})
     }
 
+    let openDeleteRestaurantModal = () => {
+        setModalVisible(true);
+    }
+
+    let cancelDeleteRestaurantModal = () => {
+        setModalVisible(false);
+    }
+
+    let confirmDeleteRestaurantModal = () => {
+        unsubscribeFunction.current();
+        Firebase.shared.deleteRestaurantById(restaurantId, () => {
+            navigation.navigate('RestaurantScreen');
+        });
+    }
+
     React.useEffect(() => {
         const unsubscribe = Firebase.shared.subscribeRestaurantById(restaurantId, setRestaurant);
+        unsubscribeFunction.current = unsubscribe;
         return unsubscribe;
     }, []);
 
@@ -30,6 +50,25 @@ export default function RestaurantDetailScreen({route, navigation}) {
                 onPress={modifyRestaurant}
                 title="Modify"
                 />
+            <Button
+                onPress={openDeleteRestaurantModal}
+                title="Delete"
+                />
+            <Modal visible={modalVisible}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Confirm delete?</Text>
+                        <Button
+                            onPress={cancelDeleteRestaurantModal}
+                            title="Cancel"
+                            />
+                        <Button 
+                            onPress={confirmDeleteRestaurantModal}
+                            title="Confirm"
+                            />
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -57,4 +96,40 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'center'
     },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+      },
+      openButton: {
+        backgroundColor: "#F194FF",
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+      },
+      textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: "center"
+      }
 });

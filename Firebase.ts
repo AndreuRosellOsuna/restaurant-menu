@@ -113,6 +113,14 @@ class Firebase {
       .then(callback())
       .catch((e) => console.error(`error on adding new restaurant: ${e} `));
   }
+
+  deleteRestaurantById = (restaurantId, callback) => {
+    this.firestore.collection(this.restaurantCollection)
+      .doc(restaurantId)
+      .delete()
+      .then(callback())
+      .catch((e) => console.error(`error on delete restaurant: ${e} `));
+  }
 }
 
 Firebase.shared = new Firebase();
