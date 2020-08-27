@@ -4,7 +4,7 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  HomeBottomTab: undefined
+  RestaurantsTab: undefined
   SettingsBottomTab: undefined;
 };
 

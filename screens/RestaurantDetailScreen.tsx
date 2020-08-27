@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { StyleSheet, Button, Modal } from 'react-native';
+import { StyleSheet, Modal } from 'react-native';
 import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
+import { Button } from 'react-native-elements';
 
 export default function RestaurantDetailScreen({route, navigation}) {
 
@@ -46,26 +47,34 @@ export default function RestaurantDetailScreen({route, navigation}) {
         <View style={styles.container}>
             <Text style={styles.name}>{restaurant.name}</Text>
             <Text style={styles.description}>{restaurant.description}</Text>
-            <Button
-                onPress={modifyRestaurant}
-                title="Modify"
-                />
-            <Button
-                onPress={openDeleteRestaurantModal}
-                title="Delete"
-                />
+            <View style={styles.buttonContainer}>
+                <Button
+                    onPress={modifyRestaurant}
+                    title="Modify"
+                    />
+            </View>
+            <View style={styles.buttonContainer}>
+                <Button
+                    onPress={openDeleteRestaurantModal}
+                    title="Delete"
+                    />
+            </View>
             <Modal visible={modalVisible}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
                         <Text style={styles.modalText}>Confirm delete?</Text>
-                        <Button
-                            onPress={cancelDeleteRestaurantModal}
-                            title="Cancel"
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                onPress={cancelDeleteRestaurantModal}
+                                title="Cancel"
+                                />
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <Button 
+                                onPress={confirmDeleteRestaurantModal}
+                                title="Confirm"
                             />
-                        <Button 
-                            onPress={confirmDeleteRestaurantModal}
-                            title="Confirm"
-                            />
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -131,5 +140,8 @@ const styles = StyleSheet.create({
       modalText: {
         marginBottom: 15,
         textAlign: "center"
+      },
+      buttonContainer: {
+        marginTop: 22
       }
 });

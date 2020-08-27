@@ -29,7 +29,9 @@ export default function RestaurantsScreen({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Restaurants</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Restaurants</Text>
+      </View>
       <View style={styles.list}>
         <FlatList 
             data={restaurants}
@@ -45,9 +47,11 @@ export default function RestaurantsScreen({navigation}) {
 
 const styles = StyleSheet.create({
   container: {
-    // height: 1,
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+  },
+  titleContainer: {
   },
   title: {
     height: 30,
@@ -59,7 +63,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'powderblue'
   },
   list: {
-    // flex: 2
     marginVertical: 3,
     width: '80%',
     backgroundColor: 'skyblue'
