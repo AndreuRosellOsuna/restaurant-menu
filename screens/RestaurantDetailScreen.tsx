@@ -3,6 +3,7 @@ import { StyleSheet, Modal } from 'react-native';
 import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { Button } from 'react-native-elements';
+import useRestaurantName from '../hooks/useRestaurantNameAsTitle';
 
 export default function RestaurantDetailScreen({route, navigation}) {
 
@@ -42,6 +43,8 @@ export default function RestaurantDetailScreen({route, navigation}) {
         unsubscribeFunction.current = unsubscribe;
         return unsubscribe;
     }, []);
+
+    useRestaurantName(navigation, restaurant);
 
     return (
         <View style={styles.container}>

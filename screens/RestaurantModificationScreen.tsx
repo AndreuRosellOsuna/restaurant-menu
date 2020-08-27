@@ -3,6 +3,7 @@ import { StyleSheet, Button } from 'react-native';
 import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { TextInput } from 'react-native-gesture-handler';
+import useRestaurantName from '../hooks/useRestaurantNameAsTitle';
 
 export default function RestaurantModificationScreen({route, navigation}) {
 
@@ -27,6 +28,8 @@ export default function RestaurantModificationScreen({route, navigation}) {
         Firebase.shared.getRestaurantById(restaurantId, setRestaurant);
     }, []);
 
+    useRestaurantName(navigation, restaurant);
+    
     return (
         <View style={styles.container}>
             <Text style={styles.name}>Name :</Text>

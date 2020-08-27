@@ -31,5 +31,7 @@ export interface Restaurant {
   id: string,
   name : string,
   restaurantType : RestaurantType,
-  description: string
+  description: string,
+  imageUrl?: string,
+  featured?: boolean
 }

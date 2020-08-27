@@ -89,13 +89,14 @@ class Firebase {
   
   parse = (id, snapshot) : Restaurant => {
 
-    const { name, restaurantType, description } = snapshot;
+    const { name, restaurantType, description, featured } = snapshot;
 
     const restaurant = {
       id,
       name,
       restaurantType,
-      description
+      description,
+      featured
     };
     
     return restaurant;

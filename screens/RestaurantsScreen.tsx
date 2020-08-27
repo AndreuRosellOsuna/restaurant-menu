@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { StyleSheet, Button } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
 import { Restaurant, RestaurantType } from '../types';
 import Firebase from '../Firebase';
-
+import { Tile, Button, Divider, Icon } from 'react-native-elements';
 
 export default function RestaurantsScreen({navigation}) {
 
@@ -18,20 +18,43 @@ export default function RestaurantsScreen({navigation}) {
   let createNewRestaurant = () => {
     navigation.navigate('RestaurantCreationScreen'); 
   }
+
+  let getRestaurantImage = (item: Restaurant) => {
+    if(item.imageUrl) {
+      return require('../assets/images/rest2.jpg');
+    } else {
+      return require('../assets/images/rest1.jpg');
+    }
+  }
   
-  const renderItem = ( { item } : {item: Restaurant}) => (
-    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemType}>{item.restaurantType}</Text>
-    </TouchableOpacity>
-  );
+  const renderItem = ( { item } : {item: Restaurant}) => {
+    let featured;
+    if(item.featured) {
+      featured = <Icon name="star" color='gold'></Icon>
+    }
+
+    return (
+    <View style={{flex: 1}}>
+      <Tile 
+      imageSrc={getRestaurantImage(item)}
+      imageContainerStyle={{flex:4}}
+      contentContainerStyle={styles.tile}
+      title={item.name}
+      titleStyle={styles.itemName}
+      onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
+      <View style={styles.tileDetail}>
+        {/* <Text style={styles.itemName}>{item.name}</Text> */}
+        <Text style={styles.itemType}>{item.restaurantType}</Text>
+        {featured}
+      </View>
+      </Tile>
+      <Divider style={{ margin: 5 }}></Divider>
+    </View>
+  )};
 
 
   return (
     <View style={styles.container}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Restaurants</Text>
-      </View>
       <View style={styles.list}>
         <FlatList 
             data={restaurants}
@@ -39,8 +62,10 @@ export default function RestaurantsScreen({navigation}) {
             renderItem={renderItem}
          />
       </View>
-      <Button title="Add new Restaurant"
-              onPress={createNewRestaurant}></Button>
+      <View style={styles.addButton}>
+        <Button title="Add new Restaurant"
+                onPress={createNewRestaurant}></Button>
+      </View>
     </View>
   );
 }
@@ -53,24 +78,15 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
   },
-  title: {
-    height: 30,
-    fontSize: 20,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
-    marginStart: 30,
-    marginTop: 40,
-    backgroundColor: 'powderblue'
-  },
   list: {
-    marginVertical: 3,
-    width: '80%',
-    backgroundColor: 'skyblue'
+    flex: 10,
+    marginVertical: 1,
   },
-  item: {
+  tile: {
+    flex: 1,
     margin: 10,
-    borderWidth: 2,
-    borderColor: 'blue'
+    // borderWidth: 2,
+    // borderColor: 'blue'
   },
   itemName: {
     color: 'midnightblue',
@@ -81,5 +97,14 @@ const styles = StyleSheet.create({
     color: 'steelblue',
     fontSize: 15,
     fontStyle: 'italic'
+  },
+  tileDetail: {
+    flex: 1, 
+    flexDirection: 'row',
+    justifyContent: 'space-between' 
+  },
+  addButton: {
+    flex: 1,
+    margin: 10
   }
 });
