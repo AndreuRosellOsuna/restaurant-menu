@@ -6,6 +6,7 @@ class Firebase {
 
   private restaurantCollection : string = 'restaurants';
   private firestore: firebase.firestore.Firestore;
+  private storage : firebase.storage.Storage;
   
   constructor() {
     this.init(); 
@@ -26,6 +27,7 @@ class Firebase {
     });
 
     this.firestore = firebase.firestore();
+    this.storage = firebase.storage();
   }
   
   observeAuth = () => firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
@@ -89,14 +91,15 @@ class Firebase {
   
   parse = (id, snapshot) : Restaurant => {
 
-    const { name, restaurantType, description, featured } = snapshot;
+    const { name, restaurantType, description, featured, imageRef } = snapshot;
 
     const restaurant = {
       id,
       name,
       restaurantType,
       description,
-      featured
+      featured,
+      imageRef
     };
     
     return restaurant;
@@ -121,6 +124,17 @@ class Firebase {
       .delete()
       .then(callback())
       .catch((e) => console.error(`error on delete restaurant: ${e} `));
+  }
+
+  getUrlImage = (imageRef: string, callback : (imageUrl: string) => any) => {
+    this.storage.ref(imageRef)
+      .getDownloadURL()
+      .then((url) => {
+        callback(url);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
   }
 }
 

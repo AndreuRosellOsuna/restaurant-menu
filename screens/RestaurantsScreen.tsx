@@ -4,11 +4,20 @@ import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
 import { Restaurant, RestaurantType } from '../types';
 import Firebase from '../Firebase';
-import { Tile, Button, Divider, Icon } from 'react-native-elements';
+import { Tile, Button, Divider, Icon, Image } from 'react-native-elements';
 
 export default function RestaurantsScreen({navigation}) {
 
   const [restaurants, setRestaurants] = React.useState([]);
+  const [imagesUrl, setImagesUrl] = React.useState({});
+  const [uniqueImage, setUniqueImage] = React.useState({});
+
+  const updateImages = (key: string, value: string) =>  {
+    setImagesUrl({
+      ...imagesUrl,
+      [key]: value
+    });
+  };
 
   React.useEffect(() => {
     const unsubscribe = Firebase.shared.subscribeToRestaurantList(setRestaurants);
@@ -19,24 +28,70 @@ export default function RestaurantsScreen({navigation}) {
     navigation.navigate('RestaurantCreationScreen'); 
   }
 
-  let getRestaurantImage = (item: Restaurant) => {
-    if(item.imageUrl) {
-      return require('../assets/images/rest2.jpg');
+  // let getRestaurantImage = (item: Restaurant) => {
+  //   if(item.imageRef) {
+  //     // Firebase.shared.getUrlImage(item.imageRef, (url) => {
+  //     //   return { uri: url };
+  //     // })
+  //     return { uri: "https://firebasestorage.googleapis.com/v0/b/restaurant-menu-8289c.appspot.com/o/restaurants%2Frest1.jpg?alt=media" };
+  //   } else {
+  //     return require('../assets/images/splash.png');
+  //   }
+  // }
+  
+  // let getRestaurantImage2 = (item: Restaurant) => {
+  //   if(item.imageRef) {
+  //     Firebase.shared.getUrlImage(item.imageRef, (url) => {
+  //       setImageUrl({
+  //         ... imageUrls,
+  //         [item.id]: url
+  //       })
+  //     })
+  //     return {uri: imageUrls[item.id]};
+  //   } else {
+  //     return require('../assets/images/splash.png');
+  //   }
+  // }
+  
+  // let getRestaurantImage3 = (item: Restaurant) => {
+  //   if(item.imageRef) {
+  //     Firebase.shared.getUrlImage(item.imageRef, (url) => {
+  //       updateImages(item.id, url);
+  //       console.log(`item ${item.id} has url ${url}`)
+  //     })
+  //   } else {
+  //     updateImages(item.id, '../assets/images/splash.png');
+  //   }
+  // }
+  
+  let getRestaurantImage3 = (item: Restaurant) => {
+    if(item.imageRef) {
+      Firebase.shared.getUrlImage(item.imageRef, (url) => {
+        // updateImages(item.id, url);
+        setUniqueImage({uri: url})
+
+        console.log(`item ${item.id} has url ${url}`)
+      })
     } else {
-      return require('../assets/images/rest1.jpg');
+      updateImages(item.id, '../assets/images/splash.png');
     }
   }
-  
+
   const renderItem = ( { item } : {item: Restaurant}) => {
     let featured;
     if(item.featured) {
       featured = <Icon name="star" color='gold'></Icon>
     }
 
+    getRestaurantImage3(item);
+
     return (
     <View style={{flex: 1}}>
       <Tile 
-      imageSrc={getRestaurantImage(item)}
+      // imageSrc={getRestaurantImage(item)}
+      // imageSrc={getRestaurantImage2(item)}
+      // imageSrc={imagesUrl[item.id]}
+      imageSrc={uniqueImage}
       imageContainerStyle={{flex:4}}
       contentContainerStyle={styles.tile}
       title={item.name}
