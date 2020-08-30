@@ -4,6 +4,8 @@ import { Text, View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { TextInput } from 'react-native-gesture-handler';
 import { RestaurantType } from '../types';
+import { Input } from 'react-native-elements';
+import {Picker} from '@react-native-community/picker';
 
 export default function RestaurantCreationScreen({navigation}) {
 
@@ -11,7 +13,7 @@ export default function RestaurantCreationScreen({navigation}) {
         {
             "name": "",
             "description": "",
-            "restaurantType": RestaurantType.KEBAP
+            "restaurantType": ""
         });
 
     var textChanged  = (text, field) => {
@@ -22,17 +24,56 @@ export default function RestaurantCreationScreen({navigation}) {
         Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
     }
 
+    let restaurantTypes = Object.keys(RestaurantType).map(typeKey => {
+        return <Picker.Item key={typeKey} label={RestaurantType[typeKey]} value={typeKey}/>
+    });
+
+    // let typePicker = () => {
+
+
+    //     return (
+    //     <Picker
+    //         selectedValue={restaurant.restaurantType}
+    //         onValueChange={(itemValue, itemIndex) => {
+    //             setRestaurant({...restaurant, "restaurantType": itemValue})
+    //         }}>
+    //         <Picker.Item label="" value=""/>
+    //         {restaurantTypes}
+    //     </Picker>
+    //     )
+    // }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.name}>Name :</Text>
-            <TextInput style={styles.input}
+            <Input
+                label="Name"
+                placeholder="Restaurant name"
                 onChangeText={text => textChanged(text, 'name')}
                 />
-            <Text style={styles.name}>Description :</Text>
-            <TextInput style={styles.input}
+            <Input
+                label="Description"
+                placeholder="Description"
+                multiline={true}
                 onChangeText={text => textChanged(text, 'description')}
                 />
 
+                
+            <Picker
+                selectedValue={restaurant.restaurantType}
+                onValueChange={(itemValue, itemIndex) => {
+                    setRestaurant({...restaurant, "restaurantType": itemValue})
+                }}>
+                <Picker.Item label="" value=""/>
+                {restaurantTypes}
+            </Picker>
+
+            {/* <Input
+                label="Type"
+                label="Type"
+                label="Type"
+                // InputComponent={typePicker}/>
+                InputComponent={() => }/> */}
+            
             <Button 
                 title="Save"
                 onPress={save} />
@@ -43,19 +84,9 @@ export default function RestaurantCreationScreen({navigation}) {
 const styles = StyleSheet.create({
     container : {
         flex: 1,   
+        padding: 10
     },
-    name : {
-        height: 30,
-        fontSize: 20,
-        fontWeight: 'bold',
-        alignSelf: 'flex-start',
-        marginStart: 30,
-        marginTop: 40,
-        alignItems: 'flex-start',
-        justifyContent: 'space-evenly'
-    },
-    input: {
-        backgroundColor: 'grey',
-        fontSize: 20,
+    label: {
+
     }
 });
