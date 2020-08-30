@@ -10,12 +10,11 @@ export default function RestaurantsScreen({navigation}) {
 
   const [restaurants, setRestaurants] = React.useState([]);
   const [imagesUrl, setImagesUrl] = React.useState({});
-  const [uniqueImage, setUniqueImage] = React.useState({});
 
   const updateImages = (key: string, value: string) =>  {
     setImagesUrl({
       ...imagesUrl,
-      [key]: value
+      [key]: {uri: value}
     });
   };
 
@@ -28,52 +27,17 @@ export default function RestaurantsScreen({navigation}) {
     navigation.navigate('RestaurantCreationScreen'); 
   }
 
-  // let getRestaurantImage = (item: Restaurant) => {
-  //   if(item.imageRef) {
-  //     // Firebase.shared.getUrlImage(item.imageRef, (url) => {
-  //     //   return { uri: url };
-  //     // })
-  //     return { uri: "https://firebasestorage.googleapis.com/v0/b/restaurant-menu-8289c.appspot.com/o/restaurants%2Frest1.jpg?alt=media" };
-  //   } else {
-  //     return require('../assets/images/splash.png');
-  //   }
-  // }
-  
-  // let getRestaurantImage2 = (item: Restaurant) => {
-  //   if(item.imageRef) {
-  //     Firebase.shared.getUrlImage(item.imageRef, (url) => {
-  //       setImageUrl({
-  //         ... imageUrls,
-  //         [item.id]: url
-  //       })
-  //     })
-  //     return {uri: imageUrls[item.id]};
-  //   } else {
-  //     return require('../assets/images/splash.png');
-  //   }
-  // }
-  
-  // let getRestaurantImage3 = (item: Restaurant) => {
-  //   if(item.imageRef) {
-  //     Firebase.shared.getUrlImage(item.imageRef, (url) => {
-  //       updateImages(item.id, url);
-  //       console.log(`item ${item.id} has url ${url}`)
-  //     })
-  //   } else {
-  //     updateImages(item.id, '../assets/images/splash.png');
-  //   }
-  // }
-  
-  let getRestaurantImage3 = (item: Restaurant) => {
+  let getRestaurantImage = (item: Restaurant) => {
+    if(imagesUrl[item.id] != undefined && imagesUrl[item.id].uri != undefined) {
+      return;
+    }
     if(item.imageRef) {
       Firebase.shared.getUrlImage(item.imageRef, (url) => {
-        // updateImages(item.id, url);
-        setUniqueImage({uri: url})
-
+        updateImages(item.id, url);
         console.log(`item ${item.id} has url ${url}`)
       })
     } else {
-      updateImages(item.id, '../assets/images/splash.png');
+      updateImages(item.id, 'https://firebasestorage.googleapis.com/v0/b/restaurant-menu-8289c.appspot.com/o/restaurants%2Fno_rest.png?alt=media&token=a11ca9f2-2830-4a05-a216-6d375e739f27');
     }
   }
 
@@ -83,22 +47,18 @@ export default function RestaurantsScreen({navigation}) {
       featured = <Icon name="star" color='gold'></Icon>
     }
 
-    getRestaurantImage3(item);
+    getRestaurantImage(item);
 
     return (
     <View style={{flex: 1}}>
       <Tile 
-      // imageSrc={getRestaurantImage(item)}
-      // imageSrc={getRestaurantImage2(item)}
-      // imageSrc={imagesUrl[item.id]}
-      imageSrc={uniqueImage}
+      imageSrc={imagesUrl[item.id]}
       imageContainerStyle={{flex:4}}
       contentContainerStyle={styles.tile}
       title={item.name}
       titleStyle={styles.itemName}
       onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
       <View style={styles.tileDetail}>
-        {/* <Text style={styles.itemName}>{item.name}</Text> */}
         <Text style={styles.itemType}>{item.restaurantType}</Text>
         {featured}
       </View>
