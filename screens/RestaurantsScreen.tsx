@@ -37,7 +37,10 @@ export default function RestaurantsScreen({navigation}) {
         console.log(`item ${item.id} has url ${url}`)
       })
     } else {
-      updateImages(item.id, 'https://firebasestorage.googleapis.com/v0/b/restaurant-menu-8289c.appspot.com/o/restaurants%2Fno_rest.png?alt=media&token=a11ca9f2-2830-4a05-a216-6d375e739f27');
+      Firebase.shared.getDefaultImage(url => {
+        updateImages(item.id, url);
+        console.log(`item ${item.id} has url ${url}`)
+      })
     }
   }
 

@@ -136,6 +136,17 @@ class Firebase {
         console.error(error);
       })
   }
+
+  getDefaultImage = (callback : (imageUrl: string) => any) => {
+    this.storage.ref('restaurants/no_rest.png')
+      .getDownloadURL()
+      .then((url) => {
+        callback(url);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+  }
 }
 
 Firebase.shared = new Firebase();
