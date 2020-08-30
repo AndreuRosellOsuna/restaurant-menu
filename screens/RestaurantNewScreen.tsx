@@ -1,11 +1,10 @@
+import { Picker } from '@react-native-community/picker';
 import * as React from 'react';
-import { StyleSheet, Button } from 'react-native';
-import { Text, View } from '../components/Themed';
-import Firebase from '../Firebase';
-import { TextInput } from 'react-native-gesture-handler';
-import { RestaurantType } from '../types';
+import { Button, StyleSheet } from 'react-native';
 import { Input } from 'react-native-elements';
-import {Picker} from '@react-native-community/picker';
+import { View } from '../components/Themed';
+import Firebase from '../Firebase';
+import { RestaurantType } from '../types';
 
 export default function RestaurantCreationScreen({navigation}) {
 
@@ -24,24 +23,23 @@ export default function RestaurantCreationScreen({navigation}) {
         Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
     }
 
-    let restaurantTypes = Object.keys(RestaurantType).map(typeKey => {
-        return <Picker.Item key={typeKey} label={RestaurantType[typeKey]} value={typeKey}/>
+    let typePicker = React.forwardRef((props, ref) => {
+            
+        let restaurantTypes = Object.keys(RestaurantType).map(typeKey => {
+            return <Picker.Item key={typeKey} label={RestaurantType[typeKey]} value={typeKey}/>
+        });
+
+        return (
+            <Picker {...props} ref={ref}
+                selectedValue={restaurant.restaurantType}
+                onValueChange={(itemValue, itemIndex) => {
+                    setRestaurant({...restaurant, "restaurantType": itemValue})
+                }}>
+                <Picker.Item label="" value=""/>
+                {restaurantTypes}
+            </Picker>
+        )
     });
-
-    // let typePicker = () => {
-
-
-    //     return (
-    //     <Picker
-    //         selectedValue={restaurant.restaurantType}
-    //         onValueChange={(itemValue, itemIndex) => {
-    //             setRestaurant({...restaurant, "restaurantType": itemValue})
-    //         }}>
-    //         <Picker.Item label="" value=""/>
-    //         {restaurantTypes}
-    //     </Picker>
-    //     )
-    // }
 
     return (
         <View style={styles.container}>
@@ -57,22 +55,9 @@ export default function RestaurantCreationScreen({navigation}) {
                 onChangeText={text => textChanged(text, 'description')}
                 />
 
-                
-            <Picker
-                selectedValue={restaurant.restaurantType}
-                onValueChange={(itemValue, itemIndex) => {
-                    setRestaurant({...restaurant, "restaurantType": itemValue})
-                }}>
-                <Picker.Item label="" value=""/>
-                {restaurantTypes}
-            </Picker>
-
-            {/* <Input
+            <Input
                 label="Type"
-                label="Type"
-                label="Type"
-                // InputComponent={typePicker}/>
-                InputComponent={() => }/> */}
+                InputComponent={typePicker}/>
             
             <Button 
                 title="Save"
