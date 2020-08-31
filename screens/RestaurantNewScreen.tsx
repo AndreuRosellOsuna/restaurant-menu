@@ -1,10 +1,13 @@
 import { Picker } from '@react-native-community/picker';
 import * as React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import { StyleSheet, ScrollView, Text, Dimensions } from 'react-native';
+import { Input, Button, Image } from 'react-native-elements';
 import { View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { RestaurantType } from '../types';
+import * as ImagePicker from 'expo-image-picker';
+
+const win = Dimensions.get('window');
 
 export default function RestaurantCreationScreen({navigation}) {
 
@@ -16,6 +19,8 @@ export default function RestaurantCreationScreen({navigation}) {
         });
 
     const [nameInputError, setNameInputError] = React.useState("");
+
+    let [selectedImage, setSelectedImage] = React.useState(null);
 
     let nameChanged = (text) => {
         setNameInputError("");
@@ -36,6 +41,29 @@ export default function RestaurantCreationScreen({navigation}) {
         if(!isError) {
             Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
         }
+    }
+
+    let openImagePickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+    
+        if (permissionResult.granted === false) {
+          alert('Permission to access camera roll is required!');
+          return;
+        }
+    
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        if (pickerResult.cancelled === true) {
+          return;
+        }
+
+        setSelectedImage({ localUri: pickerResult.uri });
+    };
+
+    let image;
+    if(selectedImage !== null) {
+        image = <Image source={{uri: selectedImage.localUri}} style={styles.image} />
+    } else {
+        image = <Text style={styles.noImageProvided}>No picture is provided</Text>
     }
 
     let typePicker = React.forwardRef((props, ref) => {
@@ -77,7 +105,16 @@ export default function RestaurantCreationScreen({navigation}) {
                     <Input
                         label="Type"
                         InputComponent={typePicker}/>
-                    
+
+                    <View style={styles.imageContainer}>
+                        {image}
+                        <Button
+                            style={{marginBottom: 10}}
+                            title="Set image"
+                            onPress={openImagePickerAsync} 
+                            />
+                    </View>
+
                 </ScrollView>
             </View>
 
@@ -98,6 +135,18 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flex: 1, 
         width: 'auto',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 10
+    },
+    imageContainer: {
+        flex: 1, 
+    },
+    image: {
+        width: win.width,
+        height: win.height,
+        resizeMode: 'contain',
+    },
+    noImageProvided: {
+        color: 'grey'
     }
 });
