@@ -1,7 +1,7 @@
 import { Picker } from '@react-native-community/picker';
 import * as React from 'react';
-import { Button, StyleSheet } from 'react-native';
-import { Input } from 'react-native-elements';
+import { StyleSheet, ScrollView } from 'react-native';
+import { Input, Button } from 'react-native-elements';
 import { View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { RestaurantType } from '../types';
@@ -15,18 +15,33 @@ export default function RestaurantCreationScreen({navigation}) {
             "restaurantType": ""
         });
 
+    const [nameInputError, setNameInputError] = React.useState("");
+
+    let nameChanged = (text) => {
+        setNameInputError("");
+        textChanged(text, 'name');
+    }
+
     var textChanged  = (text, field) => {
         setRestaurant({...restaurant, [field]: text})
     }
 
-    let save = () => {
-        Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
+    let validateAndSave = () => {
+        let isError : boolean = false;
+        if(restaurant.name == "") {
+            isError = true;
+            setNameInputError("Name is required");
+        }
+
+        if(!isError) {
+            Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
+        }
     }
 
     let typePicker = React.forwardRef((props, ref) => {
             
         let restaurantTypes = Object.keys(RestaurantType).map(typeKey => {
-            return <Picker.Item key={typeKey} label={RestaurantType[typeKey]} value={typeKey}/>
+            return <Picker.Item key={typeKey} label={RestaurantType[typeKey]} value={RestaurantType[typeKey]}/>
         });
 
         return (
@@ -43,25 +58,34 @@ export default function RestaurantCreationScreen({navigation}) {
 
     return (
         <View style={styles.container}>
-            <Input
-                label="Name"
-                placeholder="Restaurant name"
-                onChangeText={text => textChanged(text, 'name')}
-                />
-            <Input
-                label="Description"
-                placeholder="Description"
-                multiline={true}
-                onChangeText={text => textChanged(text, 'description')}
-                />
+            <View style={{flex: 10}}>
+                <ScrollView>
+                    <Input
+                        style={{marginVertical: 100}}
+                        label="Name"
+                        placeholder="Restaurant name"
+                        errorMessage={nameInputError}
+                        onChangeText={text => nameChanged(text)}
+                        />
+                    <Input
+                        label="Description"
+                        placeholder="Description"
+                        multiline={true}
+                        onChangeText={text => textChanged(text, 'description')}
+                        />
 
-            <Input
-                label="Type"
-                InputComponent={typePicker}/>
-            
-            <Button 
-                title="Save"
-                onPress={save} />
+                    <Input
+                        label="Type"
+                        InputComponent={typePicker}/>
+                    
+                </ScrollView>
+            </View>
+
+            <View style={styles.buttonContainer}>
+                <Button 
+                    title="Save"
+                    onPress={validateAndSave} />
+            </View>
         </View>
     );
 }
@@ -71,7 +95,9 @@ const styles = StyleSheet.create({
         flex: 1,   
         padding: 10
     },
-    label: {
-
+    buttonContainer: {
+        flex: 1, 
+        width: 'auto',
+        alignItems: 'center'
     }
 });
