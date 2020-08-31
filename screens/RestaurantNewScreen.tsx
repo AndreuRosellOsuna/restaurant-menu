@@ -42,30 +42,44 @@ export default function RestaurantCreationScreen({navigation}) {
             Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
         }
     }
-
-    let openImagePickerAsync = async () => {
-        let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
     
-        if (permissionResult.granted === false) {
-          alert('Permission to access camera roll is required!');
-          return;
-        }
+    let imagePicker = React.forwardRef((props, ref) => {
     
-        let pickerResult = await ImagePicker.launchImageLibraryAsync();
-        if (pickerResult.cancelled === true) {
-          return;
+        let openImagePickerAsync = async () => {
+            let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
+        
+            if (permissionResult.granted === false) {
+                alert('Permission to access camera roll is required!');
+                return;
+            }
+        
+            let pickerResult = await ImagePicker.launchImageLibraryAsync();
+            if (pickerResult.cancelled === true) {
+                return;
+            }
+    
+            setSelectedImage({ localUri: pickerResult.uri });
+        };
+    
+        let image;
+        if(selectedImage !== null) {
+            image = <Image source={{uri: selectedImage.localUri}} style={styles.image} />
+        } else {
+            image = <Text style={styles.noImageProvided}>No picture is provided</Text>
         }
 
-        setSelectedImage({ localUri: pickerResult.uri });
-    };
-
-    let image;
-    if(selectedImage !== null) {
-        image = <Image source={{uri: selectedImage.localUri}} style={styles.image} />
-    } else {
-        image = <Text style={styles.noImageProvided}>No picture is provided</Text>
-    }
-
+        return (
+             <View style={styles.imageContainer}>
+                {image}
+                <Button
+                    style={{marginBottom: 10}}
+                    title="Set image"
+                    onPress={openImagePickerAsync} 
+                    />
+            </View>
+        );
+    });
+            
     let typePicker = React.forwardRef((props, ref) => {
             
         let restaurantTypes = Object.keys(RestaurantType).map(typeKey => {
@@ -106,14 +120,9 @@ export default function RestaurantCreationScreen({navigation}) {
                         label="Type"
                         InputComponent={typePicker}/>
 
-                    <View style={styles.imageContainer}>
-                        {image}
-                        <Button
-                            style={{marginBottom: 10}}
-                            title="Set image"
-                            onPress={openImagePickerAsync} 
-                            />
-                    </View>
+                    <Input
+                        label="Image"
+                        InputComponent={imagePicker}/>
 
                 </ScrollView>
             </View>
@@ -147,6 +156,7 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     noImageProvided: {
-        color: 'grey'
+        color: 'grey',
+        marginVertical: 10
     }
 });
