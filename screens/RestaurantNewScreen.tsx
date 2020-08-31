@@ -6,6 +6,7 @@ import { View } from '../components/Themed';
 import Firebase from '../Firebase';
 import { RestaurantType } from '../types';
 import * as ImagePicker from 'expo-image-picker';
+import { primary } from '../constants/Colors';
 
 const win = Dimensions.get('window');
 
@@ -43,6 +44,17 @@ export default function RestaurantCreationScreen({navigation}) {
             Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
         }
     }
+
+    let featuredSwitch = React.forwardRef((props, ref) => {
+        return (
+            <Switch 
+                style={{marginVertical: 10}}
+                trackColor={{ false: "#767577", true: primary }}
+                value={restaurant.featured}
+                onValueChange={() => setRestaurant({...restaurant, "featured": !restaurant.featured})}
+                />
+        );
+    });
     
     let imagePicker = React.forwardRef((props, ref) => {
     
@@ -125,10 +137,13 @@ export default function RestaurantCreationScreen({navigation}) {
                         label="Image"
                         InputComponent={imagePicker}/>
 
-                    <Switch
-                        value={restaurant.featured}
-                        onValueChange={() => setRestaurant({...restaurant, "featured": !restaurant.featured})}
-                        />
+                    <Input
+                        inputContainerStyle={{
+                            flex: 1,
+                            alignItems: "center",
+                            justifyContent: "center"}}
+                        label="Featured"
+                        InputComponent={featuredSwitch}/>
 
                 </ScrollView>
             </View>
