@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-community/picker';
 import * as React from 'react';
-import { StyleSheet, ScrollView, Text, Dimensions } from 'react-native';
+import { StyleSheet, ScrollView, Text, Dimensions, Switch } from 'react-native';
 import { Input, Button, Image } from 'react-native-elements';
 import { View } from '../components/Themed';
 import Firebase from '../Firebase';
@@ -15,7 +15,8 @@ export default function RestaurantCreationScreen({navigation}) {
         {
             "name": "",
             "description": "",
-            "restaurantType": ""
+            "restaurantType": "",
+            "featured": false
         });
 
     const [nameInputError, setNameInputError] = React.useState("");
@@ -123,6 +124,11 @@ export default function RestaurantCreationScreen({navigation}) {
                     <Input
                         label="Image"
                         InputComponent={imagePicker}/>
+
+                    <Switch
+                        value={restaurant.featured}
+                        onValueChange={() => setRestaurant({...restaurant, "featured": !restaurant.featured})}
+                        />
 
                 </ScrollView>
             </View>
