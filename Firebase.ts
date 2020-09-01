@@ -6,7 +6,7 @@ class Firebase {
 
   private restaurantCollection : string = 'restaurants';
   private firestore: firebase.firestore.Firestore;
-  private storage : firebase.storage.Storage;
+  public storage : firebase.storage.Storage;
   
   constructor() {
     this.init(); 

@@ -8,16 +8,48 @@ import { RestaurantType } from '../types';
 import * as ImagePicker from 'expo-image-picker';
 import { primary } from '../constants/Colors';
 
+
 const win = Dimensions.get('window');
+
+async function uploadImageAsync(uri: string, random: string) {
+    // Why are we using XMLHttpRequest? See:
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+  
+    const ref = Firebase.shared
+      .storage
+      .ref()
+      .child(random);
+    const snapshot = await ref.put(blob);
+  
+    // We're done with the blob, close and release it
+    blob.close();
+  
+    return await snapshot.ref.getDownloadURL();
+}
+
 
 export default function RestaurantCreationScreen({navigation}) {
 
     const [restaurant, setRestaurant] = React.useState(
         {
-            "name": "",
-            "description": "",
-            "restaurantType": "",
-            "featured": false
+            "name": "Foo",
+            "description": "Boo",
+            "restaurantType": "Burguers",
+            "featured": false,
+            "imageRef": ""
         });
 
     const [nameInputError, setNameInputError] = React.useState("");
@@ -41,9 +73,28 @@ export default function RestaurantCreationScreen({navigation}) {
         }
 
         if(!isError) {
-            Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
+            _handleImagePicked()
+
+            // Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
         }
     }
+
+    let _handleImagePicked = async () => {
+        try {
+            if (selectedImage.localUri) {
+                console.log(`selected image go `)
+                console.log(`imageRef is ${restaurant.imageRef}`);
+                let uploadUrl = await uploadImageAsync(selectedImage.localUri, restaurant.imageRef);
+                // setRestaurant({ ...restaurant, "imageRef": restaurant.imageRef });
+            }
+        } catch (e) {
+          console.log(e);
+          alert('Upload failed, sorry :(');
+        } finally {
+          Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
+          console.log('image updated')
+        }
+      };
 
     let featuredSwitch = React.forwardRef((props, ref) => {
         return (
@@ -66,12 +117,16 @@ export default function RestaurantCreationScreen({navigation}) {
                 return;
             }
         
-            let pickerResult = await ImagePicker.launchImageLibraryAsync();
+            let pickerResult = await ImagePicker.launchImageLibraryAsync({aspect: [4, 3]});
             if (pickerResult.cancelled === true) {
                 return;
             }
     
             setSelectedImage({ localUri: pickerResult.uri });
+
+            let randomName = Math.random().toString(36).substring(7);
+            let imageRef = `restaurants/${randomName}`;
+            setRestaurant({ ...restaurant, "imageRef": imageRef });
         };
     
         let image;
@@ -116,6 +171,7 @@ export default function RestaurantCreationScreen({navigation}) {
             <View style={{flex: 10}}>
                 <ScrollView>
                     <Input
+                        value={restaurant.name}
                         style={{marginVertical: 100}}
                         label="Name"
                         placeholder="Restaurant name"
