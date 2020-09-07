@@ -18,15 +18,16 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   const [isLoading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const unsubscribeAuth = Firebase.shared.getAuth().onAuthStateChanged(async authUser => {
-      try {
-        await (authUser ? setUser(authUser) : setUser(null));
-        console.log(authUser)
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    });
+    // const unsubscribeAuth = Firebase.shared.getAuth().onAuthStateChanged(async authUser => {
+    //   try {
+    //     await (authUser ? setUser(authUser) : setUser(null));
+    //     console.log(authUser)
+    //     setLoading(false);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // });
+    const unsubscribeAuth = Firebase.shared.observeUserAuth(setUser, setLoading);
     return unsubscribeAuth;
   }, []);
   

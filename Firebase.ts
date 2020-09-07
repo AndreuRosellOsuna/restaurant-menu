@@ -11,7 +11,6 @@ class Firebase {
   
   constructor() {
     this.init(); 
-    //this.observeAuth();
   }
   
   init = () => {
@@ -32,19 +31,17 @@ class Firebase {
     this.auth = firebase.auth();
   }
   
-  // observeAuth = () => firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
-
-  
-  // onAuthStateChanged = user => {
-  //   if (!user) {
-  //     try {
-  //       firebase.auth().signInAnonymously();
-  //     } catch ({ message }) {
-  //       console.log('error on sign anonym')
-  //       alert(message);
-  //     }
-  //   }
-  // };
+  observeUserAuth = (setUser: () => void, setLoading: any) => {
+    return this.auth.onAuthStateChanged(async authUser => {
+      try {
+        await (authUser ? setUser(authUser) : setUser(null));
+        console.log(authUser)
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
 
   subscribeToRestaurantList = (callback) => {
     return this.firestore.collection(this.restaurantCollection)
@@ -150,8 +147,6 @@ class Firebase {
         console.error(error);
       })
   }
-
-  getAuth = () => this.auth;
 }
 
 Firebase.shared = new Firebase();
