@@ -17,6 +17,10 @@ export type HomeParamList = {
   DishesScreen: undefined;
 };
 
+export type AuthStackParamList = {
+  Welcome: undefined;
+}
+
 export type SettingsParamList = {
   SettingsScreen: undefined;
 };

@@ -7,10 +7,11 @@ class Firebase {
   private restaurantCollection : string = 'restaurants';
   private firestore: firebase.firestore.Firestore;
   public storage : firebase.storage.Storage;
+  private auth : firebase.auth.Auth;
   
   constructor() {
     this.init(); 
-    this.observeAuth();
+    //this.observeAuth();
   }
   
   init = () => {
@@ -28,20 +29,22 @@ class Firebase {
 
     this.firestore = firebase.firestore();
     this.storage = firebase.storage();
+    this.auth = firebase.auth();
   }
   
-  observeAuth = () => firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
+  // observeAuth = () => firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
 
   
-  onAuthStateChanged = user => {
-    if (!user) {
-      try {
-        firebase.auth().signInAnonymously();
-      } catch ({ message }) {
-        alert(message);
-      }
-    }
-  };
+  // onAuthStateChanged = user => {
+  //   if (!user) {
+  //     try {
+  //       firebase.auth().signInAnonymously();
+  //     } catch ({ message }) {
+  //       console.log('error on sign anonym')
+  //       alert(message);
+  //     }
+  //   }
+  // };
 
   subscribeToRestaurantList = (callback) => {
     return this.firestore.collection(this.restaurantCollection)
@@ -147,6 +150,8 @@ class Firebase {
         console.error(error);
       })
   }
+
+  getAuth = () => this.auth;
 }
 
 Firebase.shared = new Firebase();
