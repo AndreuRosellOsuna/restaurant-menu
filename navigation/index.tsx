@@ -3,12 +3,13 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import { RootStackParamList } from '../types';
+import { RootStackParamList, AuthStackParamList } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import Navigator from './Navigator';
 import { AuthUserContext } from '../auth/AuthUserProvider';
-import WelcomeScreen from '../screens/WelcomeScreen';
+import WelcomeScreen from '../auth/WelcomeScreen';
 import Firebase from '../Firebase';
+import LoginScreen from '../auth/LoginScreen';
 
 
 // If you are not familiar with React Navigation, we recommend going through the
@@ -18,15 +19,6 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
   const [isLoading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // const unsubscribeAuth = Firebase.shared.getAuth().onAuthStateChanged(async authUser => {
-    //   try {
-    //     await (authUser ? setUser(authUser) : setUser(null));
-    //     console.log(authUser)
-    //     setLoading(false);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // });
     const unsubscribeAuth = Firebase.shared.observeUserAuth(setUser, setLoading);
     return unsubscribeAuth;
   }, []);
@@ -59,6 +51,7 @@ function AuthNavigator() {
   return (
     <AuthStack.Navigator initialRouteName="Welcome" headerMode="none">
       <AuthStack.Screen name="Welcome" component={WelcomeScreen} />
+      <AuthStack.Screen name="Login" component={LoginScreen} />
     </AuthStack.Navigator>
   );
 }

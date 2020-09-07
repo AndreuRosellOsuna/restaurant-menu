@@ -19,6 +19,7 @@ export type HomeParamList = {
 
 export type AuthStackParamList = {
   Welcome: undefined;
+  Login: undefined;
 }
 
 export type SettingsParamList = {

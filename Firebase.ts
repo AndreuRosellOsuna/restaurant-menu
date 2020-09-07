@@ -35,13 +35,14 @@ class Firebase {
     return this.auth.onAuthStateChanged(async authUser => {
       try {
         await (authUser ? setUser(authUser) : setUser(null));
-        console.log(authUser)
         setLoading(false);
       } catch (error) {
         console.error(error);
       }
     });
   }
+  
+  loginWithEmail = (email: string, password: string) => this.auth.signInWithEmailAndPassword(email, password);
 
   subscribeToRestaurantList = (callback) => {
     return this.firestore.collection(this.restaurantCollection)
