@@ -4,11 +4,19 @@ import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Text, View } from '../components/Themed';
 import { Restaurant, RestaurantType } from '../types';
 import Firebase from '../Firebase';
-import { Tile, Button, Divider, Icon } from 'react-native-elements';
+import { Tile, Button, Divider, Icon, Image } from 'react-native-elements';
 
 export default function RestaurantsScreen({navigation}) {
 
   const [restaurants, setRestaurants] = React.useState([]);
+  const [imagesUrl, setImagesUrl] = React.useState({});
+
+  const updateImages = (key: string, value: string) =>  {
+    setImagesUrl({
+      ...imagesUrl,
+      [key]: {uri: value}
+    });
+  };
 
   React.useEffect(() => {
     const unsubscribe = Firebase.shared.subscribeToRestaurantList(setRestaurants);
@@ -20,30 +28,40 @@ export default function RestaurantsScreen({navigation}) {
   }
 
   let getRestaurantImage = (item: Restaurant) => {
-    if(item.imageUrl) {
-      return require('../assets/images/rest2.jpg');
+    if(imagesUrl[item.id] != undefined && imagesUrl[item.id].uri != undefined) {
+      return;
+    }
+    if(item.imageRef) {
+      Firebase.shared.getUrlImage(item.imageRef, (url) => {
+        updateImages(item.id, url);
+        console.log(`item ${item.id} has url ${url}`)
+      })
     } else {
-      return require('../assets/images/rest1.jpg');
+      Firebase.shared.getDefaultImage(url => {
+        updateImages(item.id, url);
+        console.log(`item ${item.id} has url ${url}`)
+      })
     }
   }
-  
+
   const renderItem = ( { item } : {item: Restaurant}) => {
     let featured;
     if(item.featured) {
       featured = <Icon name="star" color='gold'></Icon>
     }
 
+    getRestaurantImage(item);
+
     return (
     <View style={{flex: 1}}>
       <Tile 
-      imageSrc={getRestaurantImage(item)}
+      imageSrc={imagesUrl[item.id]}
       imageContainerStyle={{flex:4}}
       contentContainerStyle={styles.tile}
       title={item.name}
       titleStyle={styles.itemName}
       onPress={() => navigation.navigate('RestaurantDetailScreen', {restaurantId: item.id})}>
       <View style={styles.tileDetail}>
-        {/* <Text style={styles.itemName}>{item.name}</Text> */}
         <Text style={styles.itemType}>{item.restaurantType}</Text>
         {featured}
       </View>

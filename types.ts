@@ -32,6 +32,6 @@ export interface Restaurant {
   name : string,
   restaurantType : RestaurantType,
   description: string,
-  imageUrl?: string,
+  imageRef?: string,
   featured?: boolean
 }
