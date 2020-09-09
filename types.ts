@@ -38,5 +38,6 @@ export interface Restaurant {
   restaurantType : RestaurantType,
   description: string,
   imageRef?: string,
-  featured?: boolean
+  featured?: boolean,
+  userRef?: string
 }

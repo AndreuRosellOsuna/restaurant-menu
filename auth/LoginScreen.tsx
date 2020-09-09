@@ -28,7 +28,6 @@ export default function LoginScreen() {
                     setEmail(text);
                 }}
             />
-            <Text>Login Screen</Text>
             <Input 
                 label="Password"
                 secureTextEntry={true}

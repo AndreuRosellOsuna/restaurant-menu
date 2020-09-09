@@ -35,6 +35,7 @@ class Firebase {
     return this.auth.onAuthStateChanged(async authUser => {
       try {
         await (authUser ? setUser(authUser) : setUser(null));
+        //console.log(authUser);
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -44,8 +45,11 @@ class Firebase {
   
   loginWithEmail = (email: string, password: string) => this.auth.signInWithEmailAndPassword(email, password);
 
-  subscribeToRestaurantList = (callback) => {
+  logout = () => this.auth.signOut();
+
+  subscribeToRestaurantList = (userUid: string, callback) => {
     return this.firestore.collection(this.restaurantCollection)
+      .where("userRef", "==", userUid)
       .onSnapshot(results => {
         callback(this.parseRestaurantList(results));
       })
@@ -112,7 +116,8 @@ class Firebase {
       .update(restaurant)
   }
 
-  createNewRestaurant = (restaurant : Restaurant, callback : () => any) => {
+  createNewRestaurant = (restaurant : Restaurant, callback : () => any, userUid: string) => {
+    restaurant.userRef = userUid;
     this.firestore.collection(this.restaurantCollection)
       .add(restaurant)
       .then(callback())

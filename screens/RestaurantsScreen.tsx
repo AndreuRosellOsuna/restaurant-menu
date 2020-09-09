@@ -5,11 +5,13 @@ import { Text, View } from '../components/Themed';
 import { Restaurant, RestaurantType } from '../types';
 import Firebase from '../Firebase';
 import { Tile, Button, Divider, Icon, Image } from 'react-native-elements';
+import { AuthUserContext } from '../auth/AuthUserProvider';
 
 export default function RestaurantsScreen({navigation}) {
 
   const [restaurants, setRestaurants] = React.useState([]);
   const [imagesUrl, setImagesUrl] = React.useState({});
+  const { user } = React.useContext(AuthUserContext);
 
   const updateImages = (key: string, value: string) =>  {
     setImagesUrl({
@@ -19,7 +21,7 @@ export default function RestaurantsScreen({navigation}) {
   };
 
   React.useEffect(() => {
-    const unsubscribe = Firebase.shared.subscribeToRestaurantList(setRestaurants);
+    const unsubscribe = Firebase.shared.subscribeToRestaurantList(user.uid, setRestaurants);
     return unsubscribe;
   }, []);
 
