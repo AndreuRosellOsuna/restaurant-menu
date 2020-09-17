@@ -17,6 +17,11 @@ export type HomeParamList = {
   DishesScreen: undefined;
 };
 
+export type AuthStackParamList = {
+  Welcome: undefined;
+  Login: undefined;
+}
+
 export type SettingsParamList = {
   SettingsScreen: undefined;
 };
@@ -33,5 +38,6 @@ export interface Restaurant {
   restaurantType : RestaurantType,
   description: string,
   imageRef?: string,
-  featured?: boolean
+  featured?: boolean,
+  userRef?: string
 }

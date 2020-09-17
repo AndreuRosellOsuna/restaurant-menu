@@ -7,6 +7,7 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { ThemeProvider } from 'react-native-elements'
 import {primary, secondary} from './constants/Colors'
+import { AuthUserProvider } from './auth/AuthUserProvider';
 
 const theme = {
   colors: {
@@ -23,12 +24,14 @@ export default function App() {
     return null;
   } else {
     return (
-      <ThemeProvider theme={theme}>
-        <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme} />
-          <StatusBar />
-        </SafeAreaProvider>
-      </ThemeProvider>
+      <AuthUserProvider>
+        <ThemeProvider theme={theme}>
+          <SafeAreaProvider>
+            <Navigation colorScheme={colorScheme} />
+            <StatusBar />
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </AuthUserProvider>
     );
   }
 }

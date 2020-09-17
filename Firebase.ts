@@ -7,10 +7,10 @@ class Firebase {
   private restaurantCollection : string = 'restaurants';
   private firestore: firebase.firestore.Firestore;
   public storage : firebase.storage.Storage;
+  private auth : firebase.auth.Auth;
   
   constructor() {
     this.init(); 
-    this.observeAuth();
   }
   
   init = () => {
@@ -28,23 +28,28 @@ class Firebase {
 
     this.firestore = firebase.firestore();
     this.storage = firebase.storage();
+    this.auth = firebase.auth();
   }
   
-  observeAuth = () => firebase.auth().onAuthStateChanged(this.onAuthStateChanged);
-
-  
-  onAuthStateChanged = user => {
-    if (!user) {
+  observeUserAuth = (setUser: () => void, setLoading: any) => {
+    return this.auth.onAuthStateChanged(async authUser => {
       try {
-        firebase.auth().signInAnonymously();
-      } catch ({ message }) {
-        alert(message);
+        await (authUser ? setUser(authUser) : setUser(null));
+        //console.log(authUser);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
       }
-    }
-  };
+    });
+  }
+  
+  loginWithEmail = (email: string, password: string) => this.auth.signInWithEmailAndPassword(email, password);
 
-  subscribeToRestaurantList = (callback) => {
+  logout = () => this.auth.signOut();
+
+  subscribeToRestaurantList = (userUid: string, callback) => {
     return this.firestore.collection(this.restaurantCollection)
+      .where("userRef", "==", userUid)
       .onSnapshot(results => {
         callback(this.parseRestaurantList(results));
       })
@@ -111,7 +116,8 @@ class Firebase {
       .update(restaurant)
   }
 
-  createNewRestaurant = (restaurant : Restaurant, callback : () => any) => {
+  createNewRestaurant = (restaurant : Restaurant, callback : () => any, userUid: string) => {
+    restaurant.userRef = userUid;
     this.firestore.collection(this.restaurantCollection)
       .add(restaurant)
       .then(callback())

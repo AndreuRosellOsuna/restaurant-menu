@@ -7,6 +7,7 @@ import Firebase from '../Firebase';
 import { RestaurantType } from '../types';
 import * as ImagePicker from 'expo-image-picker';
 import { primary } from '../constants/Colors';
+import { AuthUserContext } from '../auth/AuthUserProvider';
 
 
 const win = Dimensions.get('window');
@@ -42,7 +43,7 @@ async function uploadImageAsync(uri: string, random: string) {
 
 
 export default function RestaurantCreationScreen({navigation}) {
-
+    const { user } = React.useContext(AuthUserContext);
     const [restaurant, setRestaurant] = React.useState(
         {
             "name": "Foo",
@@ -91,7 +92,7 @@ export default function RestaurantCreationScreen({navigation}) {
           console.log(e);
           alert('Upload failed, sorry :(');
         } finally {
-          Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
+          Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack(), user.uid);
           console.log('image updated')
         }
       };
