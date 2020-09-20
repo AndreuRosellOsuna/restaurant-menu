@@ -8,39 +8,8 @@ import { RestaurantType } from '../types';
 import * as ImagePicker from 'expo-image-picker';
 import { primary } from '../constants/Colors';
 import { AuthUserContext } from '../auth/AuthUserProvider';
-
-
-const win = Dimensions.get('window');
-
-async function uploadImageAsync(uri: string, random: string) {
-    // Why are we using XMLHttpRequest? See:
-    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function() {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function(e) {
-        console.log(e);
-        reject(new TypeError('Network request failed'));
-      };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
-      xhr.send(null);
-    });
-  
-    const ref = Firebase.shared
-      .storage
-      .ref()
-      .child(random);
-    const snapshot = await ref.put(blob);
-  
-    // We're done with the blob, close and release it
-    blob.close();
-  
-    return await snapshot.ref.getDownloadURL();
-}
-
+import Layout from '../constants/Layout';
+import uploadImageAsync from '../hooks/uploadImageAsync';
 
 export default function RestaurantCreationScreen({navigation}) {
     const { user } = React.useContext(AuthUserContext);
@@ -75,25 +44,19 @@ export default function RestaurantCreationScreen({navigation}) {
 
         if(!isError) {
             _handleImagePicked()
-
-            // Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack());
         }
     }
 
     let _handleImagePicked = async () => {
         try {
             if (selectedImage.localUri) {
-                console.log(`selected image go `)
-                console.log(`imageRef is ${restaurant.imageRef}`);
-                let uploadUrl = await uploadImageAsync(selectedImage.localUri, restaurant.imageRef);
-                // setRestaurant({ ...restaurant, "imageRef": restaurant.imageRef });
+                await uploadImageAsync(selectedImage.localUri, restaurant.imageRef);
             }
         } catch (e) {
-          console.log(e);
+          console.error(e);
           alert('Upload failed, sorry :(');
         } finally {
           Firebase.shared.createNewRestaurant(restaurant, () => navigation.goBack(), user.uid);
-          console.log('image updated')
         }
       };
 
@@ -229,8 +192,8 @@ const styles = StyleSheet.create({
         flex: 1, 
     },
     image: {
-        width: win.width,
-        height: win.height,
+        width: Layout.window.width,
+        height: Layout.window.height,
         resizeMode: 'contain',
     },
     noImageProvided: {
